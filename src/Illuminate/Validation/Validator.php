@@ -121,6 +121,13 @@ class Validator implements ValidatorContract
     protected $customValues = [];
 
     /**
+     * The array of custom messages with asterisk.
+     *
+     * @var array
+     */
+    protected $customMessagesWithAsterisk = [];
+
+    /**
      * All of the custom validator extensions.
      *
      * @var array
@@ -181,7 +188,7 @@ class Validator implements ValidatorContract
      */
     public function __construct(TranslatorInterface $translator, array $data, array $rules, array $messages = [], array $customAttributes = [])
     {
-        $this->translator = $translator;
+        $this->setTranslator($translator);
         $this->customMessages = $messages;
         $this->data = $this->parseData($data);
         $this->customAttributes = $customAttributes;
@@ -1814,9 +1821,7 @@ class Validator implements ValidatorContract
 
         $shortKey = preg_replace('/^validation\.custom\./', '', $customKey);
 
-        $customMessages = Arr::dot(
-            (array) $this->translator->trans('validation.custom')
-        );
+        $customMessages = $this->getCustomMessagesWithAsterisk();
 
         foreach ($customMessages as $key => $message) {
             if (Str::contains($key, ['*']) && Str::is($key, $shortKey)) {
@@ -2750,6 +2755,8 @@ class Validator implements ValidatorContract
     public function setTranslator(TranslatorInterface $translator)
     {
         $this->translator = $translator;
+
+        $this->flushTranslatorCache();
     }
 
     /**
@@ -2771,6 +2778,25 @@ class Validator implements ValidatorContract
     public function setCustomMessages(array $messages)
     {
         $this->customMessages = array_merge($this->customMessages, $messages);
+    }
+
+    public function flushTranslatorCache()
+    {
+        $this->customMessagesWithAsterisk = [];
+    }
+
+    protected function getCustomMessagesWithAsterisk()
+    {
+        $locale = $this->translator->getLocale();
+
+        if (!array_key_exists($locale, $this->customMessagesWithAsterisk)) {
+            $messages = Arr::dot((array) $this->translator->trans('validation.custom'));
+            $this->customMessagesWithAsterisk[$locale] = array_filter($messages, function($key) {
+                return Str::contains($key, '*');
+            }, ARRAY_FILTER_USE_KEY);
+        }
+
+        return $this->customMessagesWithAsterisk[$locale];
     }
 
     /**
