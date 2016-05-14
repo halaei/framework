@@ -97,33 +97,18 @@ class WorkCommand extends Command
 
         if ($timeout > 0) {
             if (extension_loaded('pcntl') && function_exists('pcntl_alarm') && function_exists('pcntl_signal')) {
-                declare(ticks=1);
-
-                pcntl_signal(SIGALRM, function () {
-                    throw new TimeoutException();
-                }, true);
+                declare(ticks=1) {
+                    pcntl_signal(SIGALRM, function () {
+                        throw new TimeoutException();
+                    }, true);
+                    return $this->work($connection, $queue, $delay, $memory, $daemon, $timeout);
+                }
             } else {
                 throw new MissingExtensionException('The pcntl extension is required to use the timeout option.');
             }
         }
 
-        if ($daemon) {
-            $this->worker->setCache($this->laravel['cache']->driver());
-
-            $this->worker->setDaemonExceptionHandler(
-                $this->laravel['Illuminate\Contracts\Debug\ExceptionHandler']
-            );
-
-            return $this->worker->daemon(
-                $connection, $queue, $delay, $memory, $timeout,
-                $this->option('sleep'), $this->option('tries')
-            );
-        }
-
-        return $this->worker->pop(
-            $connection, $queue, $delay, $timeout,
-            $this->option('sleep'), $this->option('tries')
-        );
+        return $this->work($connection, $queue, $delay, $memory, $daemon, $timeout);
     }
 
     /**
@@ -192,5 +177,35 @@ class WorkCommand extends Command
 
             ['tries', null, InputOption::VALUE_OPTIONAL, 'Number of times to attempt a job before logging it failed', 0],
         ];
+    }
+
+    /**
+     * @param $connection
+     * @param $queue
+     * @param $delay
+     * @param $memory
+     * @param $daemon
+     * @param $timeout
+     * @return array
+     */
+    protected function work($connection, $queue, $delay, $memory, $daemon, $timeout)
+    {
+        if ($daemon) {
+            $this->worker->setCache($this->laravel['cache']->driver());
+
+            $this->worker->setDaemonExceptionHandler(
+                $this->laravel['Illuminate\Contracts\Debug\ExceptionHandler']
+            );
+
+            return $this->worker->daemon(
+                $connection, $queue, $delay, $memory, $timeout,
+                $this->option('sleep'), $this->option('tries')
+            );
+        }
+
+        return $this->worker->pop(
+            $connection, $queue, $delay, $timeout,
+            $this->option('sleep'), $this->option('tries')
+        );
     }
 }
