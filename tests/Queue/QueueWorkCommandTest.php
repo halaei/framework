@@ -35,6 +35,8 @@ class QueueWorkCommandTest extends PHPUnit_Framework_TestCase
 
     public function setUp()
     {
+        declare(ticks=1);
+
         parent::setUp();
 
         $laravel = new Application();
