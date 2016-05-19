@@ -73,8 +73,10 @@ class RedisQueueIntegrationTest extends PHPUnit_Framework_TestCase
 
         // Pop and check it is popped correctly
         $before = time();
+        sleep(1);
         /** @var RedisJob $redisJob */
         $redisJob = $this->queue->pop();
+        sleep(1);
         $after = time();
 
         $this->assertEquals($job, unserialize(json_decode($redisJob->getRedisJob())->data->command));
@@ -101,7 +103,9 @@ class RedisQueueIntegrationTest extends PHPUnit_Framework_TestCase
 
         // Pop and check it is popped correctly
         $before = time();
+        sleep(1);
         $this->assertEquals($job, unserialize(json_decode($this->queue->pop()->getRawBody())->data->command));
+        sleep(1);
         $after = time();
 
         // Check reserved queue
@@ -124,7 +128,9 @@ class RedisQueueIntegrationTest extends PHPUnit_Framework_TestCase
 
         // Pop and check it is popped correctly
         $before = time();
+        sleep(1);
         $this->assertEquals($job, unserialize(json_decode($this->queue->pop()->getRawBody())->data->command));
+        sleep(1);
         $after = time();
 
         // Check reserved queue
@@ -154,7 +160,9 @@ class RedisQueueIntegrationTest extends PHPUnit_Framework_TestCase
 
         // Pop and check it is popped correctly
         $before = time();
+        sleep(1);
         $this->assertEquals($job, unserialize(json_decode($this->queue->pop()->getRawBody())->data->command));
+        sleep(1);
         $after = time();
 
         // Check reserved queue
@@ -185,7 +193,9 @@ class RedisQueueIntegrationTest extends PHPUnit_Framework_TestCase
 
         // Pop and check it is popped correctly
         $before = time();
+        sleep(1);
         $this->assertEquals($job, unserialize(json_decode($this->queue->pop()->getRawBody())->data->command));
+        sleep(1);
         $after = time();
 
         // Check reserved queue
@@ -208,7 +218,9 @@ class RedisQueueIntegrationTest extends PHPUnit_Framework_TestCase
         /** @var \Illuminate\Queue\Jobs\RedisJob $redisJob */
         $redisJob = $this->queue->pop();
         $before = time();
+        sleep(1);
         $redisJob->release(1000);
+        sleep(1);
         $after = time();
 
         //check the content of delayed queue
