@@ -52,7 +52,7 @@ class WorkCommand extends Command
      */
     public function fire()
     {
-        if ($this->downForMaintenance() && ! $this->option('daemon')) {
+        if ($this->laravel->isDownForMaintenance() && ! $this->option('daemon')) {
             return $this->worker->sleep($this->option('sleep'));
         }
 
@@ -127,20 +127,6 @@ class WorkCommand extends Command
     }
 
     /**
-     * Determine if the worker should run in maintenance mode.
-     *
-     * @return bool
-     */
-    protected function downForMaintenance()
-    {
-        if ($this->option('force')) {
-            return false;
-        }
-
-        return $this->laravel->isDownForMaintenance();
-    }
-
-    /**
      * Get the console command arguments.
      *
      * @return array
@@ -165,8 +151,6 @@ class WorkCommand extends Command
             ['daemon', null, InputOption::VALUE_NONE, 'Run the worker in daemon mode'],
 
             ['delay', null, InputOption::VALUE_OPTIONAL, 'Amount of time to delay failed jobs', 0],
-
-            ['force', null, InputOption::VALUE_NONE, 'Force the worker to run even in maintenance mode'],
 
             ['memory', null, InputOption::VALUE_OPTIONAL, 'The memory limit in megabytes', 128],
 
