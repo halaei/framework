@@ -2105,6 +2105,51 @@ class Builder
     }
 
     /**
+     * Batch update multiple rows with a single query using CASE-WHEN-THEN statement.
+     *
+     * @param  string $keyName
+     * @param  array $values
+     * @return int
+     */
+    public function batchUpdate($keyName, array $values)
+    {
+        $this->whereIn($keyName, array_keys($values));
+
+        $columns = [];
+
+        foreach ($values as $key => $row) {
+            foreach ($row as $column => $value) {
+                if (! array_key_exists($column, $columns)) {
+                    $columns[$column] = [];
+                }
+                $columns[$column][$key] = $value;
+            }
+        }
+
+        $params = [];
+        $cases = [];
+
+        foreach ($columns as $column => $rows) {
+            $case = "CASE";
+            foreach ($rows as $key => $value) {
+                $case .= " WHEN `$keyName` = ? THEN ?";
+                $params[] = $key;
+                $params[] = $value;
+            }
+            $case .= " ELSE `$column` END";
+            $cases[$column] = $this->raw($case);
+        }
+
+        $bindings = array_values(array_merge($params, $this->getBindings()));
+
+        $sql = $this->grammar->compileUpdate($this, $cases);
+
+        return $this->connection->update($sql, $this->cleanBindings(
+            $this->grammar->prepareBindingsForUpdate($bindings, $cases)
+        ));
+    }
+
+    /**
      * Increment a column's value by a given amount.
      *
      * @param  string  $column
