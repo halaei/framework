@@ -91,23 +91,19 @@ class PhpRedisConnection extends Connection
      * Add one or more members to a sorted set or update its score if it already exists.
      *
      * @param  string  $key
-     * @param  mixed  $dictionary
+     * @param  array  $membersAndScoresDictionary
      * @return int
      */
-    public function zadd($key, ...$dictionary)
+    public function zadd($key, array $membersAndScoresDictionary)
     {
-        if (count($dictionary) === 1) {
-            $_dictionary = [];
+        $arguments = [];
 
-            foreach ($dictionary[0] as $member => $score) {
-                $_dictionary[] = $score;
-                $_dictionary[] = $member;
-            }
-
-            $dictionary = $_dictionary;
+        foreach ($membersAndScoresDictionary as $member => $score) {
+            $arguments[] = $score;
+            $arguments[] = $member;
         }
 
-        return $this->client->zadd($key, ...$dictionary);
+        return $this->client->zadd($key, ...$arguments);
     }
 
     /**
