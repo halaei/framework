@@ -98,7 +98,7 @@ class PhpRedisConnection extends Connection
     {
         $arguments = [];
 
-        foreach ($membersAndScoresDictionary as $score => $member) {
+        foreach ($membersAndScoresDictionary as $member => $score) {
             $arguments[] = $score;
             $arguments[] = $member;
         }
