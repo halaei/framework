@@ -94,23 +94,7 @@ class Worker
                 continue;
             }
 
-            // First, we will attempt to get the next job off of the queue. We will also
-            // register the timeout handler and reset the alarm for this job so it is
-            // not stuck in a frozen state forever. Then, we can fire off this job.
-            $job = $this->getNextJob(
-                $this->manager->connection($connectionName), $queue
-            );
-
-            $this->registerTimeoutHandler($job, $options);
-
-            // If the daemon should run (not in maintenance mode, etc.), then we can run
-            // fire off this job for processing. Otherwise, we will need to sleep the
-            // worker so no more jobs are processed until they should be processed.
-            if ($job) {
-                $this->runJob($job, $connectionName, $options);
-            } else {
-                $this->sleep($options->sleep);
-            }
+            $this->runNextJob($connectionName, $queue, $options);
 
             // Finally, we will check to see if we have exceeded our memory limits or if
             // the queue should restart based on other indications. If so, we'll stop
@@ -128,7 +112,9 @@ class Worker
      */
     protected function registerTimeoutHandler($job, WorkerOptions $options)
     {
-        if ($options->timeout > 0 && $this->supportsAsyncSignals()) {
+        $timeout = $this->timeoutForJob($job, $options);
+
+        if ($timeout > 0 && $this->supportsAsyncSignals()) {
             // We will register a signal handler for the alarm signal so that we can kill this
             // process if it is running too long because it has frozen. This uses the async
             // signals supported in recent versions of PHP to accomplish it conveniently.
@@ -136,7 +122,7 @@ class Worker
                 $this->kill(1);
             });
 
-            pcntl_alarm($this->timeoutForJob($job, $options) + $options->sleep);
+            pcntl_alarm($timeout + $options->sleep);
         }
     }
 
@@ -208,9 +194,14 @@ class Worker
      */
     public function runNextJob($connectionName, $queue, WorkerOptions $options)
     {
+        // First, we will attempt to get the next job off of the queue. We will also
+        // register the timeout handler and reset the alarm for this job so it is
+        // not stuck in a frozen state forever. Then, we can fire off this job.
         $job = $this->getNextJob(
             $this->manager->connection($connectionName), $queue
         );
+
+        $this->registerTimeoutHandler($job, $options);
 
         // If we're able to pull a job off of the stack, we will process it and then return
         // from this method. If there is no job on the queue, we will "sleep" the worker

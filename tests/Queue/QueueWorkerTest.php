@@ -284,6 +284,11 @@ class WorkerFakeJob
         return $this->maxTries;
     }
 
+    public function timeout()
+    {
+        return 0;
+    }
+
     public function delete()
     {
         $this->deleted = true;
