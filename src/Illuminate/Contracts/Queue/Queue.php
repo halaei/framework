@@ -83,6 +83,15 @@ interface Queue
     public function pop($queue = null);
 
     /**
+     * Pop multiple jobs off of the queue.
+     *
+     * @param  int     $n
+     * @param  string  $queue
+     * @return \Illuminate\Contracts\Queue\Job[]|\Illuminate\Support\Collection
+     */
+    public function multiPop($n, $queue = null);
+
+    /**
      * Get the connection name for the queue.
      *
      * @return string

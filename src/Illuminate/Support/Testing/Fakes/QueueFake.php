@@ -200,6 +200,18 @@ class QueueFake implements Queue
     }
 
     /**
+     * Pop multiple jobs off of the queue.
+     *
+     * @param  int $n
+     * @param  string $queue
+     * @return \Illuminate\Contracts\Queue\Job[]|\Illuminate\Support\Collection
+     */
+    public function multiPop($n, $queue = null)
+    {
+        //
+    }
+
+    /**
      * Push an array of jobs onto the queue.
      *
      * @param  array $jobs

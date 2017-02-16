@@ -3,6 +3,7 @@
 namespace Illuminate\Queue;
 
 use Illuminate\Container\Container;
+use Illuminate\Support\Collection;
 
 abstract class Queue
 {
@@ -69,6 +70,26 @@ abstract class Queue
         foreach ((array) $jobs as $job) {
             $this->push($job, $data, $queue);
         }
+    }
+
+    /**
+     * Pop multiple jobs off of the queue.
+     *
+     * @param  int     $n
+     * @param  string  $queue
+     * @return \Illuminate\Contracts\Queue\Job[]|\Illuminate\Support\Collection
+     */
+    public function multiPop($n, $queue = null)
+    {
+        $jobs = [];
+        for ($i = 0; $i < $n; $i++) {
+            if ($job = $this->pop($queue)) {
+                $jobs[] = $job;
+            } else {
+                break;
+            }
+        }
+        return new Collection($jobs);
     }
 
     /**
