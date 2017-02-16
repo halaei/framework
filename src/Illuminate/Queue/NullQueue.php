@@ -3,6 +3,7 @@
 namespace Illuminate\Queue;
 
 use Illuminate\Contracts\Queue\Queue as QueueContract;
+use Illuminate\Support\Collection;
 
 class NullQueue extends Queue implements QueueContract
 {
@@ -58,13 +59,14 @@ class NullQueue extends Queue implements QueueContract
     }
 
     /**
-     * Pop the next job off of the queue.
+     * Pop the next jobs off of the queue.
      *
+     * @param  int     $n
      * @param  string  $queue
-     * @return \Illuminate\Contracts\Queue\Job|null
+     * @return \Illuminate\Contracts\Queue\Job[]|\Illuminate\Support\Collection
      */
-    public function pop($queue = null)
+    public function pop($n, $queue = null)
     {
-        //
+        return new Collection();
     }
 }

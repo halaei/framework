@@ -117,7 +117,7 @@ class QueueDatabaseQueueIntegrationTest extends TestCase
                 'created_at' => Carbon::now()->getTimestamp(),
             ]);
 
-        $popped_job = $this->queue->pop($mock_queue_name);
+        $popped_job = $this->queue->pop(1, $mock_queue_name)->first();
 
         $this->assertNotNull($popped_job);
     }
@@ -139,7 +139,7 @@ class QueueDatabaseQueueIntegrationTest extends TestCase
 
         $this->connection()->table('jobs')->insert($job);
 
-        $popped_job = $this->queue->pop($job['queue']);
+        $popped_job = $this->queue->pop(1, $job['queue'])->first();
 
         $database_record = $this->connection()->table('jobs')->find($job['id']);
 
@@ -164,7 +164,7 @@ class QueueDatabaseQueueIntegrationTest extends TestCase
                 'created_at' => Carbon::now()->getTimestamp(),
             ]);
 
-        $popped_job = $this->queue->pop($mock_queue_name);
+        $popped_job = $this->queue->pop(1, $mock_queue_name)->first();
 
         $this->assertNull($popped_job);
     }
@@ -186,7 +186,7 @@ class QueueDatabaseQueueIntegrationTest extends TestCase
                 'created_at' => Carbon::now()->getTimestamp(),
             ]);
 
-        $popped_job = $this->queue->pop($mock_queue_name);
+        $popped_job = $this->queue->pop(1, $mock_queue_name)->first();
 
         $this->assertNotNull($popped_job);
     }
@@ -208,7 +208,7 @@ class QueueDatabaseQueueIntegrationTest extends TestCase
                 'created_at' => Carbon::now()->getTimestamp(),
             ]);
 
-        $popped_job = $this->queue->pop($mock_queue_name);
+        $popped_job = $this->queue->pop(1, $mock_queue_name)->first();
 
         $this->assertNull($popped_job);
     }

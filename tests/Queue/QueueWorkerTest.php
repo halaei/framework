@@ -2,6 +2,9 @@
 
 namespace Illuminate\Tests\Queue;
 
+use Illuminate\Contracts\Queue\Job;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Queue\JobProcessor;
 use Mockery;
 use RuntimeException;
 use PHPUnit\Framework\TestCase;
@@ -69,7 +72,7 @@ class QueueWorkerTest extends TestCase
         $worker = new InsomniacWorker(
             new WorkerFakeManager('default', new BrokenQueueConnection($e = new RuntimeException)),
             $this->events,
-            $this->exceptionHandler
+            $this->exceptionHandler, new JobProcessor($this->events)
         );
 
         $worker->runNextJob('default', 'queue', $this->workerOptions());
@@ -178,6 +181,7 @@ class QueueWorkerTest extends TestCase
             new WorkerFakeManager($connectionName, new WorkerFakeConnection($jobs)),
             $this->events,
             $this->exceptionHandler,
+            new JobProcessor($this->events),
         ];
     }
 
@@ -230,9 +234,11 @@ class WorkerFakeConnection
         $this->jobs = $jobs;
     }
 
-    public function pop($queue)
+    public function pop($n, $queue)
     {
-        return array_shift($this->jobs[$queue]);
+        $job = array_shift($this->jobs[$queue]);
+
+        return new Collection($job ? [$job] : []);
     }
 }
 
@@ -245,13 +251,13 @@ class BrokenQueueConnection
         $this->exception = $exception;
     }
 
-    public function pop($queue)
+    public function pop($n, $queue)
     {
         throw $this->exception;
     }
 }
 
-class WorkerFakeJob
+class WorkerFakeJob implements Job
 {
     public $fired = false;
     public $callback;
@@ -294,7 +300,7 @@ class WorkerFakeJob
         return $this->deleted;
     }
 
-    public function release($delay)
+    public function release($delay = 0)
     {
         $this->releaseAfter = $delay;
     }
@@ -317,5 +323,67 @@ class WorkerFakeJob
     public function setConnectionName($name)
     {
         $this->connectionName = $name;
+    }
+
+    /**
+     * Determine if the job has been deleted or released.
+     *
+     * @return bool
+     */
+    public function isDeletedOrReleased()
+    {
+        throw new \Exception;
+    }
+
+    /**
+     * Get the name of the queued job class.
+     *
+     * @return string
+     */
+    public function getName()
+    {
+        throw new \Exception;
+    }
+
+    /**
+     * Get the resolved name of the queued job class.
+     *
+     * Resolves the name of "wrapped" jobs such as class-based handlers.
+     *
+     * @return string
+     */
+    public function resolveName()
+    {
+        throw new \Exception;
+    }
+
+    /**
+     * Get the name of the connection the job belongs to.
+     *
+     * @return string
+     */
+    public function getConnectionName()
+    {
+        throw new \Exception;
+    }
+
+    /**
+     * Get the name of the queue the job belongs to.
+     *
+     * @return string
+     */
+    public function getQueue()
+    {
+        throw new \Exception;
+    }
+
+    /**
+     * Get the raw body string for the job.
+     *
+     * @return string
+     */
+    public function getRawBody()
+    {
+        throw new \Exception;
     }
 }

@@ -54,7 +54,7 @@ class QueueSqsQueueTest extends TestCase
         $queue->setContainer(m::mock('Illuminate\Container\Container'));
         $queue->expects($this->once())->method('getQueue')->with($this->queueName)->will($this->returnValue($this->queueUrl));
         $this->sqs->shouldReceive('receiveMessage')->once()->with(['QueueUrl' => $this->queueUrl, 'AttributeNames' => ['ApproximateReceiveCount']])->andReturn($this->mockedReceiveMessageResponseModel);
-        $result = $queue->pop($this->queueName);
+        $result = $queue->pop(1, $this->queueName)->first();
         $this->assertInstanceOf('Illuminate\Queue\Jobs\SqsJob', $result);
     }
 

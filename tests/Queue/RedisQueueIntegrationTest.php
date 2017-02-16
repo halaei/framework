@@ -55,10 +55,10 @@ class RedisQueueIntegrationTest extends TestCase
         $this->queue->later(-300, $jobs[2]);
         $this->queue->later(-100, $jobs[3]);
 
-        $this->assertEquals($jobs[2], unserialize(json_decode($this->queue->pop()->getRawBody())->data->command));
-        $this->assertEquals($jobs[1], unserialize(json_decode($this->queue->pop()->getRawBody())->data->command));
-        $this->assertEquals($jobs[3], unserialize(json_decode($this->queue->pop()->getRawBody())->data->command));
-        $this->assertNull($this->queue->pop());
+        $this->assertEquals($jobs[2], unserialize(json_decode($this->queue->pop(1)->first()->getRawBody())->data->command));
+        $this->assertEquals($jobs[1], unserialize(json_decode($this->queue->pop(1)->first()->getRawBody())->data->command));
+        $this->assertEquals($jobs[3], unserialize(json_decode($this->queue->pop(1)->first()->getRawBody())->data->command));
+        $this->assertNull($this->queue->pop(1)->first());
 
         $this->assertEquals(1, $this->redis[$driver]->connection()->zcard('queues:default:delayed'));
         $this->assertEquals(3, $this->redis[$driver]->connection()->zcard('queues:default:reserved'));
@@ -80,7 +80,7 @@ class RedisQueueIntegrationTest extends TestCase
         // Pop and check it is popped correctly
         $before = Carbon::now()->getTimestamp();
         /** @var RedisJob $redisJob */
-        $redisJob = $this->queue->pop();
+        $redisJob = $this->queue->pop(1)->first();
         $after = Carbon::now()->getTimestamp();
 
         $this->assertEquals($job, unserialize(json_decode($redisJob->getRawBody())->data->command));
@@ -113,7 +113,7 @@ class RedisQueueIntegrationTest extends TestCase
 
         // Pop and check it is popped correctly
         $before = Carbon::now()->getTimestamp();
-        $this->assertEquals($job, unserialize(json_decode($this->queue->pop()->getRawBody())->data->command));
+        $this->assertEquals($job, unserialize(json_decode($this->queue->pop(1)->first()->getRawBody())->data->command));
         $after = Carbon::now()->getTimestamp();
 
         // Check reserved queue
@@ -142,7 +142,7 @@ class RedisQueueIntegrationTest extends TestCase
 
         // Pop and check it is popped correctly
         $before = Carbon::now()->getTimestamp();
-        $this->assertEquals($job, unserialize(json_decode($this->queue->pop()->getRawBody())->data->command));
+        $this->assertEquals($job, unserialize(json_decode($this->queue->pop(1)->first()->getRawBody())->data->command));
         $after = Carbon::now()->getTimestamp();
 
         // Check reserved queue
@@ -169,7 +169,7 @@ class RedisQueueIntegrationTest extends TestCase
         $failed = new RedisQueueIntegrationTestJob(-20);
         $this->queue->push($failed);
         $beforeFailPop = Carbon::now()->getTimestamp();
-        $this->queue->pop();
+        $this->queue->pop(1)->first();
         $afterFailPop = Carbon::now()->getTimestamp();
 
         // Push an item into queue
@@ -178,7 +178,7 @@ class RedisQueueIntegrationTest extends TestCase
 
         // Pop and check it is popped correctly
         $before = Carbon::now()->getTimestamp();
-        $this->assertEquals($job, unserialize(json_decode($this->queue->pop()->getRawBody())->data->command));
+        $this->assertEquals($job, unserialize(json_decode($this->queue->pop(1)->first()->getRawBody())->data->command));
         $after = Carbon::now()->getTimestamp();
 
         // Check reserved queue
@@ -215,7 +215,7 @@ class RedisQueueIntegrationTest extends TestCase
 
         // Pop and check it is popped correctly
         $before = Carbon::now()->getTimestamp();
-        $this->assertEquals($job, unserialize(json_decode($this->queue->pop()->getRawBody())->data->command));
+        $this->assertEquals($job, unserialize(json_decode($this->queue->pop(1)->first()->getRawBody())->data->command));
         $after = Carbon::now()->getTimestamp();
 
         // Check reserved queue
@@ -243,7 +243,7 @@ class RedisQueueIntegrationTest extends TestCase
 
         //pop and release the job
         /** @var \Illuminate\Queue\Jobs\RedisJob $redisJob */
-        $redisJob = $this->queue->pop();
+        $redisJob = $this->queue->pop(1)->first();
         $before = Carbon::now()->getTimestamp();
         $redisJob->release(1000);
         $after = Carbon::now()->getTimestamp();
@@ -266,7 +266,7 @@ class RedisQueueIntegrationTest extends TestCase
         $this->assertEquals($job, unserialize($decoded->data->command));
 
         //check if the queue has no ready item yet
-        $this->assertNull($this->queue->pop());
+        $this->assertNull($this->queue->pop(1)->first());
     }
 
     /**
@@ -281,10 +281,10 @@ class RedisQueueIntegrationTest extends TestCase
         $this->queue->push($job);
 
         /** @var RedisJob $redisJob */
-        $redisJob = $this->queue->pop();
+        $redisJob = $this->queue->pop(1)->first();
         $redisJob->release(-3);
 
-        $this->assertInstanceOf(RedisJob::class, $this->queue->pop());
+        $this->assertInstanceOf(RedisJob::class, $this->queue->pop(1)->first());
     }
 
     /**
@@ -300,7 +300,7 @@ class RedisQueueIntegrationTest extends TestCase
         $this->queue->push($job);
 
         /** @var \Illuminate\Queue\Jobs\RedisJob $redisJob */
-        $redisJob = $this->queue->pop();
+        $redisJob = $this->queue->pop(1)->first();
 
         $redisJob->delete();
 
@@ -308,7 +308,7 @@ class RedisQueueIntegrationTest extends TestCase
         $this->assertEquals(0, $this->redis[$driver]->connection()->zcard('queues:default:reserved'));
         $this->assertEquals(0, $this->redis[$driver]->connection()->llen('queues:default'));
 
-        $this->assertNull($this->queue->pop());
+        $this->assertNull($this->queue->pop(1)->first());
     }
 
     /**
@@ -326,7 +326,7 @@ class RedisQueueIntegrationTest extends TestCase
         $this->assertEquals(2, $this->queue->size());
         $this->queue->push(new RedisQueueIntegrationTestJob(3));
         $this->assertEquals(3, $this->queue->size());
-        $job = $this->queue->pop();
+        $job = $this->queue->pop(1)->first();
         $this->assertEquals(3, $this->queue->size());
         $job->delete();
         $this->assertEquals(2, $this->queue->size());

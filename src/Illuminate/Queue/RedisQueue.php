@@ -3,6 +3,7 @@
 namespace Illuminate\Queue;
 
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Illuminate\Queue\Jobs\RedisJob;
 use Illuminate\Contracts\Redis\Factory as Redis;
@@ -146,23 +147,26 @@ class RedisQueue extends Queue implements QueueContract
     }
 
     /**
-     * Pop the next job off of the queue.
+     * Pop the next jobs off of the queue.
      *
+     * @param  int     $n
      * @param  string  $queue
-     * @return \Illuminate\Contracts\Queue\Job|null
+     * @return \Illuminate\Contracts\Queue\Job[]|\Illuminate\Support\Collection
      */
-    public function pop($queue = null)
+    public function pop($n, $queue = null)
     {
         $this->migrate($prefixed = $this->getQueue($queue));
 
         list($job, $reserved) = $this->retrieveNextJob($prefixed);
 
         if ($reserved) {
-            return new RedisJob(
+            return new Collection([new RedisJob(
                 $this->container, $this, $job,
                 $reserved, $this->connectionName, $queue ?: $this->default
-            );
+            )]);
         }
+
+        return new Collection();
     }
 
     /**

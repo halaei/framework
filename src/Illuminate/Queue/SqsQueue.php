@@ -5,6 +5,7 @@ namespace Illuminate\Queue;
 use Aws\Sqs\SqsClient;
 use Illuminate\Queue\Jobs\SqsJob;
 use Illuminate\Contracts\Queue\Queue as QueueContract;
+use Illuminate\Support\Collection;
 
 class SqsQueue extends Queue implements QueueContract
 {
@@ -104,12 +105,13 @@ class SqsQueue extends Queue implements QueueContract
     }
 
     /**
-     * Pop the next job off of the queue.
+     * Pop the next jobs off of the queue.
      *
+     * @param  int     $n
      * @param  string  $queue
-     * @return \Illuminate\Contracts\Queue\Job|null
+     * @return \Illuminate\Contracts\Queue\Job[]|\Illuminate\Support\Collection
      */
-    public function pop($queue = null)
+    public function pop($n, $queue = null)
     {
         $response = $this->sqs->receiveMessage([
             'QueueUrl' => $queue = $this->getQueue($queue),
@@ -117,11 +119,13 @@ class SqsQueue extends Queue implements QueueContract
         ]);
 
         if (count($response['Messages']) > 0) {
-            return new SqsJob(
+            return new Collection([new SqsJob(
                 $this->container, $this->sqs, $response['Messages'][0],
                 $this->connectionName, $queue
-            );
+            )]);
         }
+
+        return new Collection();
     }
 
     /**

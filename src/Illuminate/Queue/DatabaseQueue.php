@@ -4,6 +4,7 @@ namespace Illuminate\Queue;
 
 use Carbon\Carbon;
 use Illuminate\Database\Connection;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Queue\Jobs\DatabaseJob;
 use Illuminate\Queue\Jobs\DatabaseJobRecord;
 use Illuminate\Contracts\Queue\Queue as QueueContract;
@@ -180,22 +181,25 @@ class DatabaseQueue extends Queue implements QueueContract
     }
 
     /**
-     * Pop the next job off of the queue.
+     * Pop the next jobs off of the queue.
      *
+     * @param  int     $n
      * @param  string  $queue
-     * @return \Illuminate\Contracts\Queue\Job|null
+     * @return \Illuminate\Contracts\Queue\Job[]|\Illuminate\Support\Collection
      */
-    public function pop($queue = null)
+    public function pop($n, $queue = null)
     {
         $queue = $this->getQueue($queue);
 
         $this->database->beginTransaction();
 
         if ($job = $this->getNextAvailableJob($queue)) {
-            return $this->marshalJob($queue, $job);
+            return new Collection([$this->marshalJob($queue, $job)]);
         }
 
         $this->database->commit();
+
+        return new Collection();
     }
 
     /**

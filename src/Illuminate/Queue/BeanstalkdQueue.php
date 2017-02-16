@@ -2,6 +2,7 @@
 
 namespace Illuminate\Queue;
 
+use Illuminate\Support\Collection;
 use Pheanstalk\Pheanstalk;
 use Pheanstalk\Job as PheanstalkJob;
 use Illuminate\Queue\Jobs\BeanstalkdJob;
@@ -108,22 +109,25 @@ class BeanstalkdQueue extends Queue implements QueueContract
     }
 
     /**
-     * Pop the next job off of the queue.
+     * Pop the next jobs off of the queue.
      *
+     * @param  int     $n
      * @param  string  $queue
-     * @return \Illuminate\Contracts\Queue\Job|null
+     * @return \Illuminate\Contracts\Queue\Job[]|\Illuminate\Support\Collection
      */
-    public function pop($queue = null)
+    public function pop($n, $queue = null)
     {
         $queue = $this->getQueue($queue);
 
         $job = $this->pheanstalk->watchOnly($queue)->reserve(0);
 
         if ($job instanceof PheanstalkJob) {
-            return new BeanstalkdJob(
+            return new Collection([new BeanstalkdJob(
                 $this->container, $this->pheanstalk, $job, $this->connectionName, $queue
-            );
+            )]);
         }
+
+        return new Collection();
     }
 
     /**

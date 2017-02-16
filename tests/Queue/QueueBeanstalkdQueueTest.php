@@ -45,9 +45,9 @@ class QueueBeanstalkdQueueTest extends TestCase
         $job = m::mock('Pheanstalk\Job');
         $pheanstalk->shouldReceive('reserve')->once()->andReturn($job);
 
-        $result = $queue->pop();
+        $result = $queue->pop(1);
 
-        $this->assertInstanceOf('Illuminate\Queue\Jobs\BeanstalkdJob', $result);
+        $this->assertInstanceOf('Illuminate\Queue\Jobs\BeanstalkdJob', $result->first());
     }
 
     public function testDeleteProperlyRemoveJobsOffBeanstalkd()
