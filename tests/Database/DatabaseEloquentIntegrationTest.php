@@ -176,6 +176,15 @@ class DatabaseEloquentIntegrationTest extends TestCase
         }
     }
 
+    public function testCompositeWhereIns()
+    {
+        EloquentTestOrder::create(['id' => 1, 'item_type' => 'type 1', 'item_id' => 1]);
+        EloquentTestOrder::create(['id' => 2, 'item_type' => 'type 2', 'item_id' => 2]);
+        EloquentTestOrder::create(['id' => 3, 'item_type' => 'type 2', 'item_id' => 3]);
+        $orders = EloquentTestOrder::whereIn(['item_type', 'item_id'], [['type1', 1], ['type 2', 2]])->without('item');
+        dd($orders->get()->toArray());
+    }
+
     public function testBasicModelCollectionRetrieval()
     {
         EloquentTestUser::create(['id' => 1, 'email' => 'taylorotwell@gmail.com']);

@@ -247,7 +247,21 @@ class Grammar extends BaseGrammar
     protected function whereIn(Builder $query, $where)
     {
         if (! empty($where['values'])) {
-            return $this->wrap($where['column']).' in ('.$this->parameterize($where['values']).')';
+            if (is_array($where['column'])) {
+                $columns = '('.implode(', ', array_map(function ($column) {
+                    return $this->wrap($column);
+                }, $where['column'])).')';
+
+                $values = implode(', ', array_map(function ($value) {
+                    return '('.$this->parameterize($value).')';
+                }, $where['values']));
+            } else {
+                $columns = $this->wrap($where['column']);
+
+                $values = $this->parameterize($where['values']);
+            }
+
+            return $columns.' in ('.$values.')';
         }
 
         return '0 = 1';
@@ -263,7 +277,21 @@ class Grammar extends BaseGrammar
     protected function whereNotIn(Builder $query, $where)
     {
         if (! empty($where['values'])) {
-            return $this->wrap($where['column']).' not in ('.$this->parameterize($where['values']).')';
+            if (is_array($where['column'])) {
+                $columns = '('.implode(', ', array_map(function ($column) {
+                    return $this->wrap($column);
+                }, $where['column'])).')';
+
+                $values = implode(', ', array_map(function ($value) {
+                    return '('.$this->parameterize($value).')';
+                }, $where['values']));
+            } else {
+                $columns = $this->wrap($where['column']);
+
+                $values = $this->parameterize($where['values']);
+            }
+
+            return $columns.' not in ('.$values.')';
         }
 
         return '1 = 1';
@@ -278,7 +306,15 @@ class Grammar extends BaseGrammar
      */
     protected function whereInSub(Builder $query, $where)
     {
-        return $this->wrap($where['column']).' in ('.$this->compileSelect($where['query']).')';
+        if (is_array($where['column'])) {
+            $columns = '('.implode(', ', array_map(function ($column) {
+                return $this->wrap($column);
+            }, $where['column'])).')';
+        } else {
+            $columns = $this->wrap($where['column']);
+        }
+
+        return $columns .' in ('. $this->compileSelect($where['query']) .')';
     }
 
     /**
@@ -290,7 +326,15 @@ class Grammar extends BaseGrammar
      */
     protected function whereNotInSub(Builder $query, $where)
     {
-        return $this->wrap($where['column']).' not in ('.$this->compileSelect($where['query']).')';
+        if (is_array($where['column'])) {
+            $columns = '('.implode(', ', array_map(function ($column) {
+                return $this->wrap($column);
+            }, $where['column'])).')';
+        } else {
+            $columns = $this->wrap($where['column']);
+        }
+
+        return $columns.' not in ('.$this->compileSelect($where['query']).')';
     }
 
     /**
@@ -444,9 +488,17 @@ class Grammar extends BaseGrammar
      */
     protected function whereSub(Builder $query, $where)
     {
+        if (is_array($where['column'])) {
+            $columns = '('.implode(', ', array_map(function ($column) {
+                return $this->wrap($column);
+            }, $where['column'])).')';
+        } else {
+            $columns = $this->wrap($where['column']);
+        }
+
         $select = $this->compileSelect($where['query']);
 
-        return $this->wrap($where['column']).' '.$where['operator']." ($select)";
+        return $columns.' '.$where['operator']." ($select)";
     }
 
     /**

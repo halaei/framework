@@ -455,6 +455,20 @@ class DatabaseQueryBuilderTest extends TestCase
         $this->assertEquals([0 => 1, 1 => 1, 2 => 2, 3 => 3], $builder->getBindings());
     }
 
+    public function testCompositeWhereIns()
+    {
+        $builder = $this->getBuilder();
+        $builder->select('*')->from('users')->whereIn(['id', 'name'], [[1, 'foo'], [2, 'bar'], [3, 'baz']]);
+        $this->assertEquals('select * from "users" where ("id", "name") in ((?, ?), (?, ?), (?, ?))', $builder->toSql());
+        $this->assertEquals([1, 'foo', 2, 'bar', 3, 'baz'], $builder->getBindings());
+
+        $builder = $this->getBuilder();
+        $builder->select('*')->from('users')->where('id', '=', 1)
+            ->orWhereIn(['id', 'name'], [[1, 'foo'], [2, 'bar'], [3, 'baz']]);
+        $this->assertEquals('select * from "users" where "id" = ? or ("id", "name") in ((?, ?), (?, ?), (?, ?))', $builder->toSql());
+        $this->assertEquals([1, 1, 'foo', 2, 'bar', 3, 'baz'], $builder->getBindings());
+    }
+
     public function testBasicWhereNotIns()
     {
         $builder = $this->getBuilder();
@@ -466,6 +480,20 @@ class DatabaseQueryBuilderTest extends TestCase
         $builder->select('*')->from('users')->where('id', '=', 1)->orWhereNotIn('id', [1, 2, 3]);
         $this->assertEquals('select * from "users" where "id" = ? or "id" not in (?, ?, ?)', $builder->toSql());
         $this->assertEquals([0 => 1, 1 => 1, 2 => 2, 3 => 3], $builder->getBindings());
+    }
+
+    public function testCompositeWhereNotIns()
+    {
+        $builder = $this->getBuilder();
+        $builder->select('*')->from('users')->whereNotIn(['id', 'name'], [[1, 'foo'], [2, 'bar'], [3, 'baz']]);
+        $this->assertEquals('select * from "users" where ("id", "name") not in ((?, ?), (?, ?), (?, ?))', $builder->toSql());
+        $this->assertEquals([1, 'foo', 2, 'bar', 3, 'baz'], $builder->getBindings());
+
+        $builder = $this->getBuilder();
+        $builder->select('*')->from('users')->where('id', '=', 1)
+            ->orWhereNotIn(['id', 'name'], [[1, 'foo'], [2, 'bar'], [3, 'baz']]);
+        $this->assertEquals('select * from "users" where "id" = ? or ("id", "name") not in ((?, ?), (?, ?), (?, ?))', $builder->toSql());
+        $this->assertEquals([1, 1, 'foo', 2, 'bar', 3, 'baz'], $builder->getBindings());
     }
 
     public function testRawWhereIns()
