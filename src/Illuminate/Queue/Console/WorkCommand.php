@@ -28,7 +28,8 @@ class WorkCommand extends Command
                             {--memory=128 : The memory limit in megabytes}
                             {--sleep=3 : Number of seconds to sleep when no job is available}
                             {--timeout=60 : The number of seconds a child process can run}
-                            {--tries=0 : Number of times to attempt a job before logging it failed}';
+                            {--tries=0 : Number of times to attempt a job before logging it failed}
+                            {--forks=0 : The number of forks}';
 
     /**
      * The console command description.
@@ -64,6 +65,9 @@ class WorkCommand extends Command
      */
     public function handle()
     {
+        if ($this->fork()) {
+            return;
+        }
         if ($this->downForMaintenance() && $this->option('once')) {
             return $this->worker->sleep($this->option('sleep'));
         }
@@ -209,5 +213,29 @@ class WorkCommand extends Command
     protected function downForMaintenance()
     {
         return $this->option('force') ? false : $this->laravel->isDownForMaintenance();
+    }
+
+    /**
+     * Fork multiple children processes if --forks option is provided.
+     *
+     * @return bool true for workers, false for the parent.
+     */
+    protected function fork()
+    {
+        $n = $this->option('forks');
+        if ($n <= 1) {
+            return true;
+        }
+        $children = [];
+        for ($i = 0; $i < $n; $i++) {
+            if (! $pid = pcntl_fork()) {
+                return true;
+            }
+            $children[] = $pid;
+        }
+        foreach ($children as $child) {
+            pcntl_waitpid($child, $status);
+        }
+        return false;
     }
 }
