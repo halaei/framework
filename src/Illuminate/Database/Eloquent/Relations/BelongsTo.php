@@ -184,8 +184,8 @@ class BelongsTo extends Relation
         // and match back onto their children using these keys of the dictionary and
         // the primary key of the children to map them onto the correct instances.
         foreach ($models as $model) {
-            if (isset($dictionary[$model->{$foreign}])) {
-                $model->setRelation($relation, $dictionary[$model->{$foreign}]);
+            if (isset($dictionary[$key = (string) $model->{$foreign}])) {
+                $model->setRelation($relation, $dictionary[$key]);
             }
         }
 
