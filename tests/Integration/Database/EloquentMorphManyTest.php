@@ -49,7 +49,6 @@ class Post extends Model
 {
     public $table = 'posts';
     public $timestamps = true;
-    protected $guarded = ['id'];
     protected $withCount = ['comments'];
 
     public function comments()
@@ -62,7 +61,6 @@ class Comment extends Model
 {
     public $table = 'comments';
     public $timestamps = true;
-    protected $guarded = ['id'];
 
     public function commentable()
     {

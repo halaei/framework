@@ -57,7 +57,6 @@ class Model1 extends Model
 {
     public $table = 'one';
     public $timestamps = false;
-    protected $guarded = ['id'];
     protected $with = ['twos'];
 
     public function twos()
@@ -75,7 +74,6 @@ class Model2 extends Model
 {
     public $table = 'two';
     public $timestamps = false;
-    protected $guarded = ['id'];
 
     public function one()
     {
@@ -87,7 +85,6 @@ class Model3 extends Model
 {
     public $table = 'three';
     public $timestamps = false;
-    protected $guarded = ['id'];
 
     public function one()
     {

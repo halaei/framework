@@ -249,11 +249,6 @@ class NotifiableEmailLocalePreferredUser extends Model implements HasLocalePrefe
 {
     use Notifiable;
 
-    protected $fillable = [
-        'email',
-        'email_locale',
-    ];
-
     public function preferredLocale()
     {
         return $this->email_locale;

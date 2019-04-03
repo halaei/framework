@@ -124,8 +124,6 @@ class DatabaseEloquentTimestampsTest extends TestCase
 class UserWithCreatedAndUpdated extends Eloquent
 {
     protected $table = 'users';
-
-    protected $guarded = [];
 }
 
 class UserWithCreated extends Eloquent
@@ -133,8 +131,6 @@ class UserWithCreated extends Eloquent
     public const UPDATED_AT = null;
 
     protected $table = 'users_created_at';
-
-    protected $guarded = [];
 
     protected $dateFormat = 'U';
 }
@@ -144,8 +140,6 @@ class UserWithUpdated extends Eloquent
     public const CREATED_AT = null;
 
     protected $table = 'users_updated_at';
-
-    protected $guarded = [];
 
     protected $dateFormat = 'U';
 }

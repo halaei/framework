@@ -73,7 +73,5 @@ class SoftDeletingModel extends Model
 {
     use SoftDeletes;
 
-    protected $guarded = [];
-
     protected $dateFormat = 'Y-m-d H:i:s';
 }

@@ -52,7 +52,6 @@ class TestModel1 extends Model
     public $dispatchesEvents = ['created' => CustomEvent::class];
     public $table = 'test_model1';
     public $timestamps = false;
-    protected $guarded = ['id'];
 }
 
 class CustomEvent

@@ -96,8 +96,6 @@ class BaseModel extends Model
 {
     public $timestamps = false;
 
-    protected $guarded = ['id'];
-
     public function related1()
     {
         return $this->hasMany(Related1::class);
@@ -118,8 +116,6 @@ class Related1 extends Model
 {
     public $timestamps = false;
 
-    protected $fillable = ['base_model_id'];
-
     public function parent()
     {
         return $this->belongsTo(BaseModel::class);
@@ -129,8 +125,6 @@ class Related1 extends Model
 class Related2 extends Model
 {
     public $timestamps = false;
-
-    protected $fillable = ['base_model_id'];
 
     public function parent()
     {
@@ -143,8 +137,6 @@ class DeletedRelated extends Model
     use SoftDeletes;
 
     public $timestamps = false;
-
-    protected $fillable = ['base_model_id'];
 
     public function parent()
     {

@@ -50,7 +50,6 @@ class TestModel1 extends Model
 {
     public $table = 'test_model1';
     public $timestamps = false;
-    protected $guarded = ['id'];
 
     public $casts = [
         'decimal_field_2' => 'decimal:2',

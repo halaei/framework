@@ -741,7 +741,6 @@ class DatabaseEloquentSoftDeletesIntegrationTest extends TestCase
 class TestUserWithoutSoftDelete extends Eloquent
 {
     protected $table = 'users';
-    protected $guarded = [];
 
     public function posts()
     {
@@ -757,7 +756,6 @@ class SoftDeletesTestUser extends Eloquent
     use SoftDeletes;
 
     protected $table = 'users';
-    protected $guarded = [];
 
     public function posts()
     {
@@ -780,7 +778,6 @@ class SoftDeletesTestUserWithTrashedPosts extends Eloquent
     use SoftDeletes;
 
     protected $table = 'users';
-    protected $guarded = [];
 
     public function posts()
     {
@@ -796,7 +793,6 @@ class SoftDeletesTestPost extends Eloquent
     use SoftDeletes;
 
     protected $table = 'posts';
-    protected $guarded = [];
 
     public function comments()
     {
@@ -810,7 +806,6 @@ class SoftDeletesTestPost extends Eloquent
 class TestCommentWithoutSoftDelete extends Eloquent
 {
     protected $table = 'comments';
-    protected $guarded = [];
 
     public function owner()
     {
@@ -826,7 +821,6 @@ class SoftDeletesTestComment extends Eloquent
     use SoftDeletes;
 
     protected $table = 'comments';
-    protected $guarded = [];
 
     public function owner()
     {
@@ -839,7 +833,6 @@ class SoftDeletesTestCommentWithTrashed extends Eloquent
     use SoftDeletes;
 
     protected $table = 'comments';
-    protected $guarded = [];
 
     public function owner()
     {
@@ -855,7 +848,6 @@ class SoftDeletesTestAddress extends Eloquent
     use SoftDeletes;
 
     protected $table = 'addresses';
-    protected $guarded = [];
 }
 
 /**
@@ -866,7 +858,6 @@ class SoftDeletesTestGroup extends Eloquent
     use SoftDeletes;
 
     protected $table = 'groups';
-    protected $guarded = [];
 
     public function users()
     {

@@ -48,5 +48,4 @@ class ValidationUniqueRuleTest extends TestCase
 class EloquentModelStub extends Model
 {
     protected $primaryKey = 'id_column';
-    protected $guarded = [];
 }

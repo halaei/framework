@@ -139,7 +139,6 @@ class TestUpdateModel1 extends Model
 {
     public $table = 'test_model1';
     public $timestamps = false;
-    protected $guarded = ['id'];
 }
 
 class TestUpdateModel2 extends Model
@@ -147,7 +146,6 @@ class TestUpdateModel2 extends Model
     use SoftDeletes;
 
     public $table = 'test_model2';
-    protected $fillable = ['name'];
 }
 
 class TestUpdateModel3 extends Model
@@ -155,6 +153,5 @@ class TestUpdateModel3 extends Model
     use SoftDeletes;
 
     public $table = 'test_model3';
-    protected $fillable = ['counter'];
     protected $dates = ['deleted_at'];
 }

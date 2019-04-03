@@ -265,7 +265,6 @@ class FactoryBuildableUser extends Model
 {
     public $table = 'users';
     public $timestamps = false;
-    protected $guarded = ['id'];
 
     public function servers()
     {
@@ -282,7 +281,6 @@ class FactoryBuildableProfile extends Model
 {
     public $table = 'profiles';
     public $timestamps = false;
-    protected $guarded = ['id'];
 
     public function user()
     {
@@ -294,7 +292,6 @@ class FactoryBuildableTeam extends Model
 {
     public $table = 'teams';
     public $timestamps = false;
-    protected $guarded = ['id'];
 
     public function owner()
     {
@@ -316,7 +313,6 @@ class FactoryBuildableServer extends Model
 {
     public $table = 'servers';
     public $timestamps = false;
-    protected $guarded = ['id'];
     public $casts = ['tags' => 'array'];
 
     public function user()

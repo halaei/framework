@@ -21,13 +21,6 @@ class DatabaseNotification extends Model
     protected $table = 'notifications';
 
     /**
-     * The guarded attributes on the model.
-     *
-     * @var array
-     */
-    protected $guarded = [];
-
-    /**
      * The attributes that should be cast to native types.
      *
      * @var array

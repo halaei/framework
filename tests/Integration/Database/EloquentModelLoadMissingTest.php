@@ -50,8 +50,6 @@ class Comment extends Model
 {
     public $timestamps = false;
 
-    protected $guarded = ['id'];
-
     public function parent()
     {
         return $this->belongsTo(Comment::class);

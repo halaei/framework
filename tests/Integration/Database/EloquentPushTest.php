@@ -61,7 +61,6 @@ class EloquentPushTest extends DatabaseTestCase
 class UserX extends Model
 {
     public $timestamps = false;
-    protected $guarded = [];
     protected $table = 'users';
 
     public function posts()
@@ -73,7 +72,6 @@ class UserX extends Model
 class PostX extends Model
 {
     public $timestamps = false;
-    protected $guarded = [];
     protected $table = 'posts';
 
     public function comments()
@@ -85,6 +83,5 @@ class PostX extends Model
 class CommentX extends Model
 {
     public $timestamps = false;
-    protected $guarded = [];
     protected $table = 'comments';
 }

@@ -116,7 +116,6 @@ class DatabaseEloquentBelongsToManyChunkByIdTest extends TestCase
 class BelongsToManyChunkByIdTestTestUser extends Eloquent
 {
     protected $table = 'users';
-    protected $fillable = ['id', 'email'];
     public $timestamps = false;
 
     public function articles()
@@ -132,5 +131,4 @@ class BelongsToManyChunkByIdTestTestArticle extends Eloquent
     protected $keyType = 'string';
     public $incrementing = false;
     public $timestamps = false;
-    protected $fillable = ['aid', 'title'];
 }

@@ -37,5 +37,4 @@ class EloquentPaginateTest extends DatabaseTestCase
 
 class Post extends Model
 {
-    protected $guarded = [];
 }

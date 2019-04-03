@@ -292,7 +292,7 @@ class EloquentBelongsToManyTest extends DatabaseTestCase
 
         $this->assertEquals($tag->id, $post->tags()->firstOrNew(['id' => $tag->id])->id);
 
-        $this->assertNull($post->tags()->firstOrNew(['id' => 'asd'])->id);
+        $this->assertEquals(1000, $post->tags()->firstOrNew(['id' => 1000])->id);
         $this->assertInstanceOf(Tag::class, $post->tags()->firstOrNew(['id' => 'asd']));
     }
 
@@ -610,7 +610,6 @@ class Post extends Model
 {
     public $table = 'posts';
     public $timestamps = true;
-    protected $guarded = ['id'];
     protected $touches = ['touchingTags'];
 
     public function tags()
@@ -668,7 +667,6 @@ class Tag extends Model
 {
     public $table = 'tags';
     public $timestamps = true;
-    protected $guarded = ['id'];
 
     public function posts()
     {
@@ -680,7 +678,6 @@ class TouchingTag extends Model
 {
     public $table = 'tags';
     public $timestamps = true;
-    protected $guarded = ['id'];
     protected $touches = ['posts'];
 
     public function posts()
@@ -693,7 +690,6 @@ class TagWithCustomPivot extends Model
 {
     public $table = 'tags';
     public $timestamps = true;
-    protected $guarded = ['id'];
 
     public function posts()
     {
@@ -711,7 +707,6 @@ class TagWithGlobalScope extends Model
 {
     public $table = 'tags';
     public $timestamps = true;
-    protected $guarded = ['id'];
 
     public static function boot()
     {

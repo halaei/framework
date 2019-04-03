@@ -28,7 +28,6 @@ use Illuminate\Support\Collection as BaseCollection;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Query\Builder as BaseBuilder;
 use Illuminate\Database\Eloquent\JsonEncodingException;
-use Illuminate\Database\Eloquent\MassAssignmentException;
 
 class DatabaseEloquentModelTest extends TestCase
 {
@@ -907,7 +906,6 @@ class DatabaseEloquentModelTest extends TestCase
     public function testFillable()
     {
         $model = new EloquentModelStub;
-        $model->fillable(['name', 'age']);
         $model->fill(['name' => 'foo', 'age' => 'bar']);
         $this->assertEquals('foo', $model->name);
         $this->assertEquals('bar', $model->age);
@@ -929,7 +927,6 @@ class DatabaseEloquentModelTest extends TestCase
     public function testFillingJSONAttributes()
     {
         $model = new EloquentModelStub;
-        $model->fillable(['meta->name', 'meta->price', 'meta->size->width']);
         $model->fill(['meta->name' => 'foo', 'meta->price' => 'bar', 'meta->size->width' => 'baz']);
         $this->assertEquals(
             ['meta' => json_encode(['name' => 'foo', 'price' => 'bar', 'size' => ['width' => 'baz']])],
@@ -937,7 +934,6 @@ class DatabaseEloquentModelTest extends TestCase
         );
 
         $model = new EloquentModelStub(['meta' => json_encode(['name' => 'Taylor'])]);
-        $model->fillable(['meta->name', 'meta->price', 'meta->size->width']);
         $model->fill(['meta->name' => 'foo', 'meta->price' => 'bar', 'meta->size->width' => 'baz']);
         $this->assertEquals(
             ['meta' => json_encode(['name' => 'foo', 'price' => 'bar', 'size' => ['width' => 'baz']])],
@@ -948,82 +944,52 @@ class DatabaseEloquentModelTest extends TestCase
     public function testUnguardAllowsAnythingToBeSet()
     {
         $model = new EloquentModelStub;
-        EloquentModelStub::unguard();
-        $model->guard(['*']);
         $model->fill(['name' => 'foo', 'age' => 'bar']);
         $this->assertEquals('foo', $model->name);
         $this->assertEquals('bar', $model->age);
-        EloquentModelStub::unguard(false);
     }
 
-    public function testUnderscorePropertiesAreNotFilled()
+    public function testUnderscorePropertiesAreFilled()
     {
         $model = new EloquentModelStub;
         $model->fill(['_method' => 'PUT']);
-        $this->assertEquals([], $model->getAttributes());
+        $this->assertEquals(['_method' => 'PUT'], $model->getAttributes());
     }
 
     public function testGuarded()
     {
         $model = new EloquentModelStub;
-        $model->guard(['name', 'age']);
         $model->fill(['name' => 'foo', 'age' => 'bar', 'foo' => 'bar']);
-        $this->assertFalse(isset($model->name));
-        $this->assertFalse(isset($model->age));
+        $this->assertTrue(isset($model->name));
+        $this->assertTrue(isset($model->age));
         $this->assertEquals('bar', $model->foo);
     }
 
     public function testFillableOverridesGuarded()
     {
         $model = new EloquentModelStub;
-        $model->guard(['name', 'age']);
-        $model->fillable(['age', 'foo']);
         $model->fill(['name' => 'foo', 'age' => 'bar', 'foo' => 'bar']);
-        $this->assertFalse(isset($model->name));
+        $this->assertTrue(isset($model->name));
         $this->assertEquals('bar', $model->age);
         $this->assertEquals('bar', $model->foo);
     }
 
     public function testGlobalGuarded()
     {
-        $this->expectException(MassAssignmentException::class);
-        $this->expectExceptionMessage('name');
-
         $model = new EloquentModelStub;
-        $model->guard(['*']);
         $model->fill(['name' => 'foo', 'age' => 'bar', 'votes' => 'baz']);
     }
 
     public function testUnguardedRunsCallbackWhileBeingUnguarded()
     {
-        $model = Model::unguarded(function () {
-            return (new EloquentModelStub)->guard(['*'])->fill(['name' => 'Taylor']);
-        });
+        $model = (new EloquentModelStub)->fill(['name' => 'Taylor']);
         $this->assertEquals('Taylor', $model->name);
-        $this->assertFalse(Model::isUnguarded());
     }
 
     public function testUnguardedCallDoesNotChangeUnguardedState()
     {
-        Model::unguard();
-        $model = Model::unguarded(function () {
-            return (new EloquentModelStub)->guard(['*'])->fill(['name' => 'Taylor']);
-        });
+        $model = (new EloquentModelStub)->fill(['name' => 'Taylor']);
         $this->assertEquals('Taylor', $model->name);
-        $this->assertTrue(Model::isUnguarded());
-        Model::reguard();
-    }
-
-    public function testUnguardedCallDoesNotChangeUnguardedStateOnException()
-    {
-        try {
-            Model::unguarded(function () {
-                throw new Exception;
-            });
-        } catch (Exception $e) {
-            // ignore the exception
-        }
-        $this->assertFalse(Model::isUnguarded());
     }
 
     public function testHasOneCreatesProperRelation()
@@ -1917,7 +1883,6 @@ class EloquentModelStub extends Model
     public $connection;
     public $scopesCalled = [];
     protected $table = 'stub';
-    protected $guarded = [];
     protected $morph_to_stub_type = EloquentModelSaveStub::class;
 
     public function getListItemsAttribute($value)
@@ -2037,7 +2002,6 @@ class EloquentDateModelStub extends EloquentModelStub
 class EloquentModelSaveStub extends Model
 {
     protected $table = 'save_stub';
-    protected $guarded = ['id'];
 
     public function save(array $options = [])
     {
@@ -2129,8 +2093,6 @@ class EloquentModelWithStub extends Model
 class EloquentModelWithoutRelationStub extends Model
 {
     public $with = ['foo'];
-
-    protected $guarded = [];
 
     public function getEagerLoads()
     {
@@ -2244,7 +2206,6 @@ class EloquentModelCastingStub extends Model
 class EloquentModelDynamicHiddenStub extends Model
 {
     protected $table = 'stub';
-    protected $guarded = [];
 
     public function getHidden()
     {
@@ -2255,7 +2216,6 @@ class EloquentModelDynamicHiddenStub extends Model
 class EloquentModelDynamicVisibleStub extends Model
 {
     protected $table = 'stub';
-    protected $guarded = [];
 
     public function getVisible()
     {
@@ -2266,7 +2226,6 @@ class EloquentModelDynamicVisibleStub extends Model
 class EloquentModelNonIncrementingStub extends Model
 {
     protected $table = 'stub';
-    protected $guarded = [];
     public $incrementing = false;
 }
 

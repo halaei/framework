@@ -95,8 +95,6 @@ class Comment extends Model
 {
     public $timestamps = false;
 
-    protected $guarded = ['id'];
-
     public function parent()
     {
         return $this->belongsTo(Comment::class);
@@ -112,8 +110,6 @@ class Post extends Model
 {
     public $timestamps = false;
 
-    protected $guarded = ['id'];
-
     public function comments()
     {
         return $this->hasMany(Comment::class);
@@ -128,8 +124,6 @@ class Post extends Model
 class Revision extends Model
 {
     public $timestamps = false;
-
-    protected $guarded = ['id'];
 }
 
 class User extends Model

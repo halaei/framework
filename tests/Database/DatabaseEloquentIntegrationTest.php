@@ -927,8 +927,6 @@ class DatabaseEloquentIntegrationTest extends TestCase
         $model = EloquentTestWithJSON::create(['json' => ['x' => 0]]);
         $this->assertEquals(['x' => 0], $model->json);
 
-        $model->fillable(['json->y', 'json->a->b']);
-
         $model->update(['json->y' => '1']);
         $this->assertArrayNotHasKey('json->y', $model->toArray());
         $this->assertEquals(['x' => 0, 'y' => 1], $model->json);
@@ -1596,7 +1594,6 @@ class DatabaseEloquentIntegrationTest extends TestCase
 class EloquentTestUser extends Eloquent
 {
     protected $table = 'users';
-    protected $guarded = [];
 
     public function friends()
     {
@@ -1649,7 +1646,6 @@ class EloquentTestUserWithCustomFriendPivot extends EloquentTestUser
 class EloquentTestNonIncrementing extends Eloquent
 {
     protected $table = 'non_incrementing_users';
-    protected $guarded = [];
     public $incrementing = false;
     public $timestamps = false;
 }
@@ -1689,8 +1685,6 @@ class EloquentTestUserWithGlobalScopeRemovingOtherScope extends Eloquent
 
     protected $table = 'soft_deleted_users';
 
-    protected $guarded = [];
-
     public static function boot()
     {
         static::addGlobalScope(function ($builder) {
@@ -1704,7 +1698,6 @@ class EloquentTestUserWithGlobalScopeRemovingOtherScope extends Eloquent
 class EloquentTestPost extends Eloquent
 {
     protected $table = 'posts';
-    protected $guarded = [];
 
     public function user()
     {
@@ -1730,13 +1723,11 @@ class EloquentTestPost extends Eloquent
 class EloquentTestFriendLevel extends Eloquent
 {
     protected $table = 'friend_levels';
-    protected $guarded = [];
 }
 
 class EloquentTestPhoto extends Eloquent
 {
     protected $table = 'photos';
-    protected $guarded = [];
 
     public function imageable()
     {
@@ -1753,7 +1744,6 @@ class EloquentTestUserWithStringCastId extends EloquentTestUser
 
 class EloquentTestOrder extends Eloquent
 {
-    protected $guarded = [];
     protected $table = 'test_orders';
     protected $with = ['item'];
 
@@ -1765,14 +1755,12 @@ class EloquentTestOrder extends Eloquent
 
 class EloquentTestItem extends Eloquent
 {
-    protected $guarded = [];
     protected $table = 'test_items';
     protected $connection = 'second_connection';
 }
 
 class EloquentTestWithJSON extends Eloquent
 {
-    protected $guarded = [];
     protected $table = 'with_json';
     public $timestamps = false;
     protected $casts = [
@@ -1783,7 +1771,6 @@ class EloquentTestWithJSON extends Eloquent
 class EloquentTestFriendPivot extends Pivot
 {
     protected $table = 'friends';
-    protected $guarded = [];
 
     public function user()
     {
@@ -1804,13 +1791,11 @@ class EloquentTestFriendPivot extends Pivot
 class EloquentTouchingUser extends Eloquent
 {
     protected $table = 'users';
-    protected $guarded = [];
 }
 
 class EloquentTouchingPost extends Eloquent
 {
     protected $table = 'posts';
-    protected $guarded = [];
 
     protected $touches = [
         'user',
@@ -1825,7 +1810,6 @@ class EloquentTouchingPost extends Eloquent
 class EloquentTouchingComment extends Eloquent
 {
     protected $table = 'comments';
-    protected $guarded = [];
 
     protected $touches = [
         'post',

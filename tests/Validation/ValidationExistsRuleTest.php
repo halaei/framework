@@ -178,6 +178,5 @@ class ValidationExistsRuleTest extends TestCase
 class EloquentTestUser extends Eloquent
 {
     protected $table = 'users';
-    protected $guarded = [];
     public $timestamps = false;
 }

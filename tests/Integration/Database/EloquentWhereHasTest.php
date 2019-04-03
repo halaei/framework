@@ -65,8 +65,6 @@ class Post extends Model
 {
     public $timestamps = false;
 
-    protected $guarded = [];
-
     protected $withCount = ['comments'];
 
     public function comments()

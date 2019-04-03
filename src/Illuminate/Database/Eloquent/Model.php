@@ -25,7 +25,6 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
         Concerns\HasRelationships,
         Concerns\HasTimestamps,
         Concerns\HidesAttributes,
-        Concerns\GuardsAttributes,
         ForwardsCalls;
 
     /**
@@ -308,27 +307,16 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
      *
      * @param  array  $attributes
      * @return $this
-     *
-     * @throws \Illuminate\Database\Eloquent\MassAssignmentException
      */
     public function fill(array $attributes)
     {
-        $totallyGuarded = $this->totallyGuarded();
-
-        foreach ($this->fillableFromArray($attributes) as $key => $value) {
+        foreach ($attributes as $key => $value) {
             $key = $this->removeTableFromKey($key);
 
             // The developers may choose to place some attributes in the "fillable" array
             // which means only those attributes may be set through mass assignment to
             // the model, and all others will just get ignored for security reasons.
-            if ($this->isFillable($key)) {
-                $this->setAttribute($key, $value);
-            } elseif ($totallyGuarded) {
-                throw new MassAssignmentException(sprintf(
-                    'Add [%s] to fillable property to allow mass assignment on [%s].',
-                    $key, get_class($this)
-                ));
-            }
+            $this->setAttribute($key, $value);
         }
 
         return $this;
@@ -342,9 +330,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
      */
     public function forceFill(array $attributes)
     {
-        return static::unguarded(function () use ($attributes) {
-            return $this->fill($attributes);
-        });
+        return $this->fill($attributes);
     }
 
     /**

@@ -45,5 +45,4 @@ class ValidatorTest extends DatabaseTestCase
 class User extends Model
 {
     public $timestamps = false;
-    protected $guarded = ['id'];
 }

@@ -387,7 +387,6 @@ class DatabaseEloquentHasManyThroughIntegrationTest extends TestCase
 class HasManyThroughTestUser extends Eloquent
 {
     protected $table = 'users';
-    protected $guarded = [];
 
     public function posts()
     {
@@ -401,7 +400,6 @@ class HasManyThroughTestUser extends Eloquent
 class HasManyThroughTestPost extends Eloquent
 {
     protected $table = 'posts';
-    protected $guarded = [];
 
     public function owner()
     {
@@ -412,7 +410,6 @@ class HasManyThroughTestPost extends Eloquent
 class HasManyThroughTestCountry extends Eloquent
 {
     protected $table = 'countries';
-    protected $guarded = [];
 
     public function posts()
     {
@@ -431,7 +428,6 @@ class HasManyThroughTestCountry extends Eloquent
 class HasManyThroughDefaultTestUser extends Eloquent
 {
     protected $table = 'users_default';
-    protected $guarded = [];
 
     public function posts()
     {
@@ -445,7 +441,6 @@ class HasManyThroughDefaultTestUser extends Eloquent
 class HasManyThroughDefaultTestPost extends Eloquent
 {
     protected $table = 'posts_default';
-    protected $guarded = [];
 
     public function owner()
     {
@@ -456,7 +451,6 @@ class HasManyThroughDefaultTestPost extends Eloquent
 class HasManyThroughDefaultTestCountry extends Eloquent
 {
     protected $table = 'countries_default';
-    protected $guarded = [];
 
     public function posts()
     {
@@ -472,7 +466,6 @@ class HasManyThroughDefaultTestCountry extends Eloquent
 class HasManyThroughIntermediateTestCountry extends Eloquent
 {
     protected $table = 'countries';
-    protected $guarded = [];
 
     public function posts()
     {
@@ -490,7 +483,6 @@ class HasManyThroughSoftDeletesTestUser extends Eloquent
     use SoftDeletes;
 
     protected $table = 'users';
-    protected $guarded = [];
 
     public function posts()
     {
@@ -504,7 +496,6 @@ class HasManyThroughSoftDeletesTestUser extends Eloquent
 class HasManyThroughSoftDeletesTestPost extends Eloquent
 {
     protected $table = 'posts';
-    protected $guarded = [];
 
     public function owner()
     {
@@ -515,7 +506,6 @@ class HasManyThroughSoftDeletesTestPost extends Eloquent
 class HasManyThroughSoftDeletesTestCountry extends Eloquent
 {
     protected $table = 'countries';
-    protected $guarded = [];
 
     public function posts()
     {

@@ -756,9 +756,7 @@ class Builder
      */
     public function forceCreate(array $attributes)
     {
-        return $this->model->unguarded(function () use ($attributes) {
-            return $this->newModelInstance()->create($attributes);
-        });
+        return $this->newModelInstance()->create($attributes);
     }
 
     /**

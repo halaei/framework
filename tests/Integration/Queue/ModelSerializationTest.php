@@ -225,13 +225,11 @@ class ModelSerializationTest extends TestCase
 class ModelSerializationTestUser extends Model
 {
     public $table = 'users';
-    public $guarded = ['id'];
     public $timestamps = false;
 }
 
 class Order extends Model
 {
-    public $guarded = ['id'];
     public $timestamps = false;
 
     public function line()
@@ -252,7 +250,6 @@ class Order extends Model
 
 class Line extends Model
 {
-    public $guarded = ['id'];
     public $timestamps = false;
 
     public function product()
@@ -263,13 +260,11 @@ class Line extends Model
 
 class Product extends Model
 {
-    public $guarded = ['id'];
     public $timestamps = false;
 }
 
 class User extends Model
 {
-    public $guarded = ['id'];
     public $timestamps = false;
 
     public function roles()
@@ -281,7 +276,6 @@ class User extends Model
 
 class Role extends Model
 {
-    public $guarded = ['id'];
     public $timestamps = false;
 
     public function users()
@@ -293,7 +287,6 @@ class Role extends Model
 
 class RoleUser extends Pivot
 {
-    public $guarded = ['id'];
     public $timestamps = false;
 
     public function user()

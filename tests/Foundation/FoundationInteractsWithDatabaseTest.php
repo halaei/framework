@@ -157,6 +157,4 @@ class FoundationInteractsWithDatabaseTest extends TestCase
 class ProductStub extends Model
 {
     protected $table = 'products';
-
-    protected $guarded = [];
 }

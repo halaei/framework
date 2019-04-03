@@ -38,5 +38,4 @@ class EloquentCollectionFreshTest extends DatabaseTestCase
 
 class User extends Model
 {
-    protected $guarded = [];
 }

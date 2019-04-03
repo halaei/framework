@@ -129,11 +129,6 @@ class StringCasts extends Eloquent
     /**
      * @var array
      */
-    protected $guarded = [];
-
-    /**
-     * @var array
-     */
     protected $casts = [
         'array_attributes' => 'array',
         'json_attributes' => 'json',

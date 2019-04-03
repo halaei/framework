@@ -114,7 +114,6 @@ class DatabaseEloquentBelongsToManySyncReturnValueTypeTest extends TestCase
 class BelongsToManySyncTestTestUser extends Eloquent
 {
     protected $table = 'users';
-    protected $fillable = ['id', 'email'];
     public $timestamps = false;
 
     public function articles()
@@ -129,5 +128,4 @@ class BelongsToManySyncTestTestArticle extends Eloquent
     protected $keyType = 'string';
     public $incrementing = false;
     public $timestamps = false;
-    protected $fillable = ['id', 'title'];
 }

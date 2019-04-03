@@ -176,7 +176,6 @@ class DatabaseEloquentPolymorphicIntegrationTest extends TestCase
 class TestUser extends Eloquent
 {
     protected $table = 'users';
-    protected $guarded = [];
 
     public function posts()
     {
@@ -190,7 +189,6 @@ class TestUser extends Eloquent
 class TestPost extends Eloquent
 {
     protected $table = 'posts';
-    protected $guarded = [];
 
     public function comments()
     {
@@ -214,7 +212,6 @@ class TestPost extends Eloquent
 class TestComment extends Eloquent
 {
     protected $table = 'comments';
-    protected $guarded = [];
     protected $with = ['commentable'];
 
     public function owner()
@@ -236,7 +233,6 @@ class TestComment extends Eloquent
 class TestLike extends Eloquent
 {
     protected $table = 'likes';
-    protected $guarded = [];
 
     public function likeable()
     {
@@ -247,7 +243,6 @@ class TestLike extends Eloquent
 class TestLikeWithSingleWith extends Eloquent
 {
     protected $table = 'likes';
-    protected $guarded = [];
     protected $with = ['likeable'];
 
     public function likeable()
@@ -259,7 +254,6 @@ class TestLikeWithSingleWith extends Eloquent
 class TestLikeWithNestedWith extends Eloquent
 {
     protected $table = 'likes';
-    protected $guarded = [];
     protected $with = ['likeable.owner'];
 
     public function likeable()

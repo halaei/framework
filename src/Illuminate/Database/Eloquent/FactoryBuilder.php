@@ -287,17 +287,15 @@ class FactoryBuilder
      */
     protected function makeInstance(array $attributes = [])
     {
-        return Model::unguarded(function () use ($attributes) {
-            $instance = new $this->class(
-                $this->getRawAttributes($attributes)
-            );
+        $instance = new $this->class(
+            $this->getRawAttributes($attributes)
+        );
 
-            if (isset($this->connection)) {
-                $instance->setConnection($this->connection);
-            }
+        if (isset($this->connection)) {
+            $instance->setConnection($this->connection);
+        }
 
-            return $instance;
-        });
+        return $instance;
     }
 
     /**

@@ -115,8 +115,6 @@ class DatabaseEloquentIrregularPluralTest extends TestCase
 
 class IrregularPluralHuman extends Model
 {
-    protected $guarded = [];
-
     public function irregularPluralTokens()
     {
         return $this->belongsToMany(
@@ -135,8 +133,6 @@ class IrregularPluralHuman extends Model
 
 class IrregularPluralToken extends Model
 {
-    protected $guarded = [];
-
     public $timestamps = false;
 
     protected $touches = [
@@ -146,8 +142,6 @@ class IrregularPluralToken extends Model
 
 class IrregularPluralMotto extends Model
 {
-    protected $guarded = [];
-
     public $timestamps = false;
 
     public function irregularPluralHumans()

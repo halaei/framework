@@ -110,5 +110,4 @@ class DatabaseEloquentMorphToManyTest extends TestCase
 
 class EloquentMorphToManyModelStub extends Model
 {
-    protected $guarded = [];
 }
