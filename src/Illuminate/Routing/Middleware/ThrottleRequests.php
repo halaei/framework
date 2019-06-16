@@ -45,7 +45,9 @@ class ThrottleRequests
      */
     public function handle($request, Closure $next, $maxAttempts = 60, $decayMinutes = 1)
     {
-        $key = $this->resolveRequestSignature($request);
+        $decaySeconds = (int) ($decayMinutes * 60);
+
+        $key = $this->resolveRequestSignature($request).$decaySeconds;
 
         $maxAttempts = $this->resolveMaxAttempts($request, $maxAttempts);
 
@@ -53,7 +55,7 @@ class ThrottleRequests
             throw $this->buildException($key, $maxAttempts);
         }
 
-        $this->limiter->hit($key, $decayMinutes * 60);
+        $this->limiter->hit($key, $decaySeconds);
 
         $response = $next($request);
 
