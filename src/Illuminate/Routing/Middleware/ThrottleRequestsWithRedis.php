@@ -41,33 +41,19 @@ class ThrottleRequestsWithRedis extends ThrottleRequests
     }
 
     /**
-     * Handle an incoming request.
+     * Apply the rate limit.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
+     * @param  string  $key
      * @param  int|string  $maxAttempts
      * @param  float|int  $decayMinutes
-     * @param  string  $name
-     * @return mixed
      *
-     * @throws \Symfony\Component\HttpKernel\Exception\HttpException
+     * @throws \Illuminate\Http\Exceptions\ThrottleRequestsException
      */
-    public function handle($request, Closure $next, $maxAttempts = 60, $decayMinutes = 1, $name = 'default')
+    protected function applyLimit($key, $maxAttempts, $decayMinutes)
     {
-        $key = $name.$this->resolveRequestSignature($request);
-
-        $maxAttempts = $this->resolveMaxAttempts($request, $maxAttempts);
-
         if ($this->tooManyAttempts($key, $maxAttempts, $decayMinutes)) {
             throw $this->buildException($key, $maxAttempts);
         }
-
-        $response = $next($request);
-
-        return $this->addHeaders(
-            $response, $maxAttempts,
-            $this->calculateRemainingAttempts($key, $maxAttempts)
-        );
     }
 
     /**

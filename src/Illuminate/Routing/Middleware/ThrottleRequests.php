@@ -37,7 +37,7 @@ class ThrottleRequests
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \Closure  $next
-     * @param  int|string  $maxAttempts
+     * @param  int|string|object  $maxAttempts
      * @param  float|int  $decayMinutes
      * @param  string  $name
      * @return \Symfony\Component\HttpFoundation\Response
@@ -46,15 +46,17 @@ class ThrottleRequests
      */
     public function handle($request, Closure $next, $maxAttempts = 60, $decayMinutes = 1, $name = 'default')
     {
+        if (is_object($maxAttempts)) {
+            $decayMinutes = $maxAttempts->decayMinutes($request);
+            $name = $maxAttempts->name($request, $name);
+            $maxAttempts = $maxAttempts->maxAttempts($request, $maxAttempts);
+        }
+
         $key = $name.$this->resolveRequestSignature($request);
 
         $maxAttempts = $this->resolveMaxAttempts($request, $maxAttempts);
 
-        if ($this->limiter->tooManyAttempts($key, $maxAttempts)) {
-            throw $this->buildException($key, $maxAttempts);
-        }
-
-        $this->limiter->hit($key, $decayMinutes * 60);
+        $this->applyLimit($key, $maxAttempts, $decayMinutes);
 
         $response = $next($request);
 
@@ -62,6 +64,24 @@ class ThrottleRequests
             $response, $maxAttempts,
             $this->calculateRemainingAttempts($key, $maxAttempts)
         );
+    }
+
+    /**
+     * Apply the rate limit.
+     *
+     * @param  string  $key
+     * @param  int|string  $maxAttempts
+     * @param  float|int  $decayMinutes
+     *
+     * @throws \Illuminate\Http\Exceptions\ThrottleRequestsException
+     */
+    protected function applyLimit($key, $maxAttempts, $decayMinutes)
+    {
+        if ($this->limiter->tooManyAttempts($key, $maxAttempts)) {
+            throw $this->buildException($key, $maxAttempts);
+        }
+
+        $this->limiter->hit($key, $decayMinutes * 60);
     }
 
     /**
