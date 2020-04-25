@@ -3801,14 +3801,35 @@ class ValidationValidatorTest extends TestCase
         $v = new Validator($trans, ['foo' => ['bar' => ''], 'foo.bar' => 'valid'], ['foo.bar' => 'required']);
         $this->assertTrue($v->fails());
 
+        $v = new Validator($trans, ['foo' => ['bar' => 'valid'], 'foo.bar' => ''], ['foo.bar' => 'required|in:valid']);
+        $this->assertTrue($v->passes());
+
         $v = new Validator($trans, ['foo' => ['bar' => 'valid'], 'foo.bar' => ''], ['foo\.bar' => 'required']);
         $this->assertTrue($v->fails());
+
+        $v = new Validator($trans, ['foo.bar' => 'valid'], ['foo\.bar' => 'required']);
+        $this->assertTrue($v->passes());
 
         $v = new Validator($trans, ['foo' => ['bar.baz' => '']], ['foo.bar\.baz' => 'required']);
         $this->assertTrue($v->fails());
 
+        $v = new Validator($trans, ['foo' => ['bar.baz' => 'valid'], 'foo.bar' => ['baz' => '']], ['foo.bar\.baz' => 'required']);
+        $this->assertTrue($v->passes());
+
         $v = new Validator($trans, ['foo' => [['bar.baz' => ''], ['bar.baz' => '']]], ['foo.*.bar\.baz' => 'required']);
         $this->assertTrue($v->fails());
+
+        $v = new Validator($trans, ['foo' => [['bar.baz' => 'valid'], ['bar.baz' => 'valid']]], ['foo.*.bar\.baz' => 'required']);
+        $this->assertTrue($v->passes());
+
+        $v = new Validator($trans, ['foo.*' => ['bar' => 'valid'], 'foo' => [['bar' => 'invalid']]], ['foo.*.bar' => 'required|in:valid']);
+        $this->assertTrue($v->fails());
+
+        $v = new Validator($trans, ['matrix' => ['\\' => ['invalid'], '1\\' => ['invalid']]], ['matrix.*.*' => 'integer']);
+        $this->assertTrue($v->fails());
+
+        $v = new Validator($trans, ['matrix' => ['\\' => [1], '1\\' => [1]]], ['matrix.*.*' => 'required']);
+        $this->assertTrue($v->passes());
     }
 
     public function testCoveringEmptyKeys()
